@@ -1,6 +1,7 @@
 import express from 'express';
 import { graphqlHTTP } from 'express-graphql';
 import { buildSchema } from 'graphql';
+import connectDB from './db';
 
 
 const schema = buildSchema(`
@@ -13,6 +14,7 @@ const root = {
   hello: () => 'Hello world!',
 };
 
+connectDB();
 
 const app = express();
 app.use('/graphql', graphqlHTTP({
