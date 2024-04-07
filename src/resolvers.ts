@@ -2,9 +2,13 @@ import Producer from "./models/Producer";
 import Product from "./models/Product";
 
 export const resolvers = {
-
   product: async ({ _id }: { _id: string }) => {
-    return await Product.findById(_id);
+      const product = await Product.findById(_id).populate('producerId');
+      if (!product) {
+        return null;
+      }
+      const producer = await Producer.findById(product.producerId);
+      return { ...product.toObject(), producer };
   },
 
   producer: async ({ _id }: { _id: string }) => {

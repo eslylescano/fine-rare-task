@@ -1,4 +1,4 @@
-import mongoose, { Document } from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IProduct extends Document {
     vintage: string;
@@ -6,11 +6,11 @@ export interface IProduct extends Document {
     producerId: mongoose.Types.ObjectId;
 }
 
-const productSchema = new mongoose.Schema<IProduct>({
+const productSchema: Schema<IProduct> = new mongoose.Schema<IProduct>({
     vintage: String,
     name: String,
     producerId: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'Producer'
     }
 });

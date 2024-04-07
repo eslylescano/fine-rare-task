@@ -5,6 +5,7 @@ export const schema = buildSchema(`
     _id: ID!
     vintage: String!
     name: String!
+    producer: Producer
   }
 
   type Producer {
