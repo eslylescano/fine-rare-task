@@ -218,3 +218,26 @@ describe('GraphQL UpdateProduct Mutation', () => {
     expect(response.body).toEqual(expectedData);
   });
 });
+
+describe('DeleteProducts Mutation', () => {
+  it('should delete products correctly', async () => {
+    const response = await request(app)
+      .post('/graphql')
+      .send({
+        query: `mutation {
+          deleteProducts(ids: ["66130d7a9740133fbb890e6d", "66130d7a9740133fbb890e6c", "66130dd585dea9a4fc1fc344", "66130dd585dea9a4fc1fc345", "66130dd585dea9a4fc1fc343"])
+        }`
+      })
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(200);
+
+    const expectedData = {
+      data: {
+        deleteProducts: true
+      }
+    };
+
+    expect(response.body).toEqual(expectedData);
+  });
+});
