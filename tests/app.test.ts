@@ -152,3 +152,40 @@ describe('GraphQL Producer Query', () => {
   });
   
 });
+
+describe('GraphQL Product Mutation', () => {
+  it('should create multiple products correctly', async () => {
+    const response = await request(app)
+      .post('/graphql')
+      .send({
+        query: `
+          mutation {
+            createProducts(input: [
+              { vintage: "2022", name: "Product 1", producerId: "6612c25bf4e19865c7718e0a" },
+              { vintage: "2023", name: "Product 2", producerId: "6612c25bf4e19865c7718e0a" },
+              { vintage: "2024", name: "Product 3", producerId: "6612c25bf4e19865c7718e0a" }
+            ]) {
+              name
+              vintage
+              _id
+            }
+          }
+        `
+      })
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(200);
+
+    expect(response.body.data.createProducts.length).toBe(3);
+    expect(response.body.data.createProducts[0].name).toBe('Product 1');
+    expect(response.body.data.createProducts[0].vintage).toBe('2022');
+    expect(response.body.data.createProducts[0]).toHaveProperty('_id');
+    expect(response.body.data.createProducts[1].name).toBe('Product 2');
+    expect(response.body.data.createProducts[1].vintage).toBe('2023');
+    expect(response.body.data.createProducts[1]).toHaveProperty('_id');
+    expect(response.body.data.createProducts[2].name).toBe('Product 3');
+    expect(response.body.data.createProducts[2].vintage).toBe('2024');
+    expect(response.body.data.createProducts[2]).toHaveProperty('_id');
+  });
+
+});
