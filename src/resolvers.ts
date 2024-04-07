@@ -14,4 +14,9 @@ export const resolvers = {
   producer: async ({ _id }: { _id: string }) => {
     return await Producer.findById(_id);
   },
+
+  products: async ({ producerId }: { producerId: string }) => {
+    const products = await Product.find({ producerId });
+    return products;
+  },
 };

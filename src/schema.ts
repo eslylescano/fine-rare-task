@@ -18,6 +18,7 @@ export const schema = buildSchema(`
   type Query {
     product(_id: ID!): Product
     producer(_id: ID!): Producer
+    products(producerId: ID!): [Product]
   }
 
 `);
