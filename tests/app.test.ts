@@ -24,6 +24,49 @@ describe('GraphQL Product Query', () => {
     expect(response.body).toEqual(expectedData);
   });
 
+
+  it('should fetch product details with associated producer correctly', async () => {
+    const response = await request(app)
+      .post('/graphql')
+      .send({
+        query: `
+          {
+            product(_id: "6612d42cf4e19865c7718e0e") {
+              name
+              vintage
+              _id
+              producer {
+                name
+                country
+                region
+              }
+            }
+          }
+        `
+      })
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(200);
+  
+    const expectedData = {
+      data: {
+        product: {
+          name: 'Product Name',
+          vintage: '2022',
+          _id: '6612d42cf4e19865c7718e0e',
+          producer: {
+            name: 'Producer Name',
+            country: 'Producer Country',
+            region: 'Producer Region'
+          }
+        }
+      }
+    };
+  
+    expect(response.body).toEqual(expectedData);
+  });
+  
+
 });
 
 describe('GraphQL Producer Query', () => {
