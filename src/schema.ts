@@ -24,6 +24,7 @@ export const schema = buildSchema(`
   type Mutation {
     createProducts(input: [CreateProductInput]!): [Product]!
     updateProduct(_id: ID!, input: UpdateProductInput!): Product
+    deleteProducts(ids: [ID]!): Boolean
   }
 
   input CreateProductInput {

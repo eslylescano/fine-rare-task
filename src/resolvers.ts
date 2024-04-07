@@ -55,5 +55,13 @@ export const resolvers = {
     } catch (error:any) {
       throw new Error(error.message);
     }
+  },
+  deleteProducts: async ({ ids }: { ids: string[] }) => {
+    try {
+      await Product.deleteMany({ _id: { $in: ids } });
+      return true;
+    } catch (error:any) {
+      throw new Error(error.message);
+    }
   }
 };
