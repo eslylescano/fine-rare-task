@@ -1,6 +1,12 @@
 import Producer from "./models/Producer";
 import Product from "./models/Product";
 
+interface CreateProductInput {
+  vintage: string;
+  name: string;
+  producerId: string;
+}
+
 export const resolvers = {
   product: async ({ _id }: { _id: string }) => {
       const product = await Product.findById(_id).populate('producerId');
@@ -18,5 +24,19 @@ export const resolvers = {
   products: async ({ producerId }: { producerId: string }) => {
     const products = await Product.find({ producerId });
     return products;
+  },
+
+  createProducts: async ({ input }: { input: CreateProductInput[] }) => {
+    try {
+      const products = await Promise.all(input.map(async (productInput) => {
+        const { vintage, name, producerId } = productInput;
+        const product = new Product({ vintage, name, producerId });
+        await product.save();
+        return product;
+      }));
+      return products;
+    } catch (error:any) {
+      throw new Error(error.message);
+    }
   },
 };

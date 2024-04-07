@@ -5,7 +5,7 @@ export const schema = buildSchema(`
     _id: ID!
     vintage: String!
     name: String!
-    producer: Producer
+    producer: Producer!
   }
 
   type Producer {
@@ -19,6 +19,16 @@ export const schema = buildSchema(`
     product(_id: ID!): Product
     producer(_id: ID!): Producer
     products(producerId: ID!): [Product]
+  }
+
+  type Mutation {
+    createProducts(input: [CreateProductInput]!): [Product]!
+  }
+
+  input CreateProductInput {
+    vintage: String!
+    name: String!
+    producerId: ID!
   }
 
 `);
