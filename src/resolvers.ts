@@ -7,6 +7,11 @@ interface CreateProductInput {
   producerId: string;
 }
 
+interface UpdateProductInput {
+  vintage?: string;
+  name?: string;
+}
+
 export const resolvers = {
   product: async ({ _id }: { _id: string }) => {
       const product = await Product.findById(_id).populate('producerId');
@@ -39,4 +44,16 @@ export const resolvers = {
       throw new Error(error.message);
     }
   },
+  updateProduct: async ({ _id, input }: { _id: string, input: UpdateProductInput }) => {
+    try {
+      const product = await Product.findByIdAndUpdate(_id, input, { new: true });
+      if (!product) {
+        return null;
+      }
+      const producer = await Producer.findById(product.producerId);
+      return { ...product.toObject(), producer };
+    } catch (error:any) {
+      throw new Error(error.message);
+    }
+  }
 };

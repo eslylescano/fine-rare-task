@@ -23,12 +23,18 @@ export const schema = buildSchema(`
 
   type Mutation {
     createProducts(input: [CreateProductInput]!): [Product]!
+    updateProduct(_id: ID!, input: UpdateProductInput!): Product
   }
 
   input CreateProductInput {
     vintage: String!
     name: String!
     producerId: ID!
+  }
+
+  input UpdateProductInput {
+    vintage: String
+    name: String
   }
 
 `);
