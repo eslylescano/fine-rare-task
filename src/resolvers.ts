@@ -1,3 +1,4 @@
+import { processCSVStream } from "./csvProccess/csvProcessor";
 import Producer from "./models/Producer";
 import Product from "./models/Product";
 
@@ -63,5 +64,9 @@ export const resolvers = {
     } catch (error:any) {
       throw new Error(error.message);
     }
+  },
+  startCSVImport: async () => {
+    processCSVStream();
+    return true;
   }
 };
