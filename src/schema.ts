@@ -25,6 +25,7 @@ export const schema = buildSchema(`
     createProducts(input: [CreateProductInput]!): [Product]!
     updateProduct(_id: ID!, input: UpdateProductInput!): Product
     deleteProducts(ids: [ID]!): Boolean
+    startCSVImport: Boolean
   }
 
   input CreateProductInput {
