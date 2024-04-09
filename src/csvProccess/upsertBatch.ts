@@ -3,33 +3,39 @@ import Product from "../models/Product";
 
 export async function upsertBatch(batch: any[]) {
   try {
-    const bulkOperations = batch.map(async (entry) => {
-      if (!entry || !entry.data || !entry.data.Producer) {
-        console.error('Invalid entry:', entry);
-        return null;
-      }
 
-      const data = entry.data;
+    const uniqueProducers = [...new Set(batch
+      .filter(entry => entry.Producer) 
+      .map(entry => JSON.stringify({ name: entry.Producer, country: entry.Country, region: entry.Region })))
+    ].map(str => JSON.parse(str));
 
-      let producer = await Producer.findOne({ name: data.Producer });
+
+    const producerPromises = uniqueProducers.map(async (producerObject) => {
+      let producer = await Producer.findOne({ name: producerObject.name });
       if (!producer) {
-        producer = await Producer.create({ name: data.Producer });
+        producer = await Producer.create(producerObject);
       }
+      return producer;
+    });
 
+    const producers = await Promise.all(producerPromises);
+
+
+    const productPromises = batch.map(async (entry) => {
+      if (!entry.Producer) return; 
+      const producer = producers.find(producer => producer.name === entry.Producer);
       return Product.findOneAndUpdate(
         {
-          vintage: data.Vintage,
-          name: data['Product Name'],
+          vintage: entry.Vintage,
+          name: entry['Product Name'],
           producerId: producer ? producer._id : null
         },
-        data,
+        entry,
         { upsert: true, new: true }
       );
     });
 
-    const validOperations = bulkOperations.filter(op => op !== null);
-
-    const result = await Promise.all(validOperations);
+    const result = await Promise.all(productPromises);
 
     console.log(`Upserted ${result.length} documents`);
 
