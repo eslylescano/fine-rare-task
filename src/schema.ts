@@ -23,6 +23,7 @@ export const schema = buildSchema(`
 
   type Mutation {
     createProducts(input: [CreateProductInput]!): [Product]!
+    createProducer(input: CreateProducerInput!): Producer!
     updateProduct(_id: ID!, input: UpdateProductInput!): Product
     deleteProducts(ids: [ID]!): Boolean
     startCSVImport: Boolean
@@ -37,6 +38,12 @@ export const schema = buildSchema(`
   input UpdateProductInput {
     vintage: String
     name: String
+  }
+
+  input CreateProducerInput {
+    name: String!
+    country: String
+    region: String
   }
 
 `);

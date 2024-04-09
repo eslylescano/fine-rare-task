@@ -13,6 +13,12 @@ interface UpdateProductInput {
   name?: string;
 }
 
+interface CreateProducerInput {
+  name: string;
+  country?: string;
+  region?: string;
+}
+
 export const resolvers = {
   product: async ({ _id }: { _id: string }) => {
       const product = await Product.findById(_id).populate('producerId');
@@ -45,6 +51,17 @@ export const resolvers = {
       throw new Error(error.message);
     }
   },
+
+  createProducer: async ({ input }: { input: CreateProducerInput }) => {
+    try {
+      const producer = new Producer(input);
+      await producer.save();
+      return producer;
+    } catch (error:any) {
+      throw new Error(error.message);
+    }
+  },
+
   updateProduct: async ({ _id, input }: { _id: string, input: UpdateProductInput }) => {
     try {
       const product = await Product.findByIdAndUpdate(_id, input, { new: true });
