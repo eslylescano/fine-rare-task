@@ -11,13 +11,15 @@ export async function processCSVStream() {
   let batchCount = 0;
   let batch: any[] = [];
 
-  fs.createReadStream(filePath)
+  const readStream = fs.createReadStream(filePath)
     .pipe(csv())
     .on('data', async (row) => {
       batch.push(row);
 
       if (batch.length === batchSize) {
+        readStream.pause();
         await upsertBatch(batch);
+        readStream.resume();
         batch = [];
         batchCount++;
         console.log(`Processed ${batchCount} batches`);
