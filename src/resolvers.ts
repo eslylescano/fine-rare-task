@@ -48,7 +48,8 @@ export const resolvers = {
       }));
       return products;
     } catch (error:any) {
-      throw new Error(error.message);
+      error.message = "Error creating products due "+error.message;
+      throw new Error(error);
     }
   },
 
@@ -58,7 +59,8 @@ export const resolvers = {
       await producer.save();
       return producer;
     } catch (error:any) {
-      throw new Error(error.message);
+      error.message = "Error creating producer due "+error.message;
+      throw new Error(error);
     }
   },
 
@@ -71,7 +73,8 @@ export const resolvers = {
       const producer = await Producer.findById(product.producerId);
       return { ...product.toObject(), producer };
     } catch (error:any) {
-      throw new Error(error.message);
+      error.message = "Error updating product due "+error.message;
+      throw new Error(error);
     }
   },
   deleteProducts: async ({ ids }: { ids: string[] }) => {
@@ -79,7 +82,8 @@ export const resolvers = {
       await Product.deleteMany({ _id: { $in: ids } });
       return true;
     } catch (error:any) {
-      throw new Error(error.message);
+      error.message = "Error deleting products due "+error.message;
+      throw new Error(error);
     }
   },
   startCSVImport: async () => {
