@@ -1,10 +1,22 @@
 import request from 'supertest';
-import app from '../src/app';
+import startServer from "../src/app";
+import { Server } from 'http';
 
+let appInstance: Express.Application;
+let serverInstance: Server;
 
+beforeAll(async () => {
+  const { app: appInstanceTemp, server: serverInstanceTemp } = await startServer();
+  appInstance = appInstanceTemp;
+  serverInstance = serverInstanceTemp;
+});
+
+afterAll(async () => {
+  await serverInstance.close();
+});
 describe('GraphQL Product Query', () => {
   it('should fetch product details correctly', async () => {
-    const response = await request(app)
+    const response = await request(serverInstance)
       .post('/graphql')
       .send({ query: '{ product(_id: "6612b72ff4e19865c7718e05") { name vintage _id } }' })
       .set('Accept', 'application/json')
@@ -26,7 +38,7 @@ describe('GraphQL Product Query', () => {
 
 
   it('should fetch product details with associated producer correctly', async () => {
-    const response = await request(app)
+    const response = await request(serverInstance)
       .post('/graphql')
       .send({
         query: `
@@ -47,7 +59,7 @@ describe('GraphQL Product Query', () => {
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .expect(200);
-  
+
     const expectedData = {
       data: {
         product: {
@@ -62,13 +74,13 @@ describe('GraphQL Product Query', () => {
         }
       }
     };
-  
+
     expect(response.body).toEqual(expectedData);
   });
-  
+
 
   it.skip('should fetch products by producerId correctly', async () => {
-    const response = await request(app)
+    const response = await request(serverInstance)
       .post('/graphql')
       .send({
         query: `
@@ -84,7 +96,7 @@ describe('GraphQL Product Query', () => {
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .expect(200);
-  
+
     const expectedData = {
       data: {
         products: [
@@ -121,22 +133,22 @@ describe('GraphQL Product Query', () => {
         ]
       }
     };
-  
+
     expect(response.body).toEqual(expectedData);
   });
-  
+
 
 });
 
 describe('GraphQL Producer Query', () => {
   it('should fetch producer details correctly', async () => {
-    const response = await request(app)
+    const response = await request(serverInstance)
       .post('/graphql')
       .send({ query: '{ producer(_id: "6612c25bf4e19865c7718e0a") { name country region _id } }' })
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .expect(200);
-  
+
     const expectedData = {
       data: {
         producer: {
@@ -147,15 +159,15 @@ describe('GraphQL Producer Query', () => {
         }
       }
     };
-  
+
     expect(response.body).toEqual(expectedData);
   });
-  
+
 });
 
 describe('GraphQL Product Mutation', () => {
   it('should create multiple products correctly', async () => {
-    const response = await request(app)
+    const response = await request(serverInstance)
       .post('/graphql')
       .send({
         query: `
@@ -192,7 +204,7 @@ describe('GraphQL Product Mutation', () => {
 
 describe('GraphQL UpdateProduct Mutation', () => {
   it('should update product name correctly', async () => {
-    const response = await request(app)
+    const response = await request(serverInstance)
       .post('/graphql')
       .send({ query: 'mutation { updateProduct(_id: "6612f284f4e19865c7718e16", input: { name: "New Product Name" }) { _id name vintage producer { _id name country region } } }' })
       .set('Accept', 'application/json')
@@ -221,7 +233,7 @@ describe('GraphQL UpdateProduct Mutation', () => {
 
 describe('DeleteProducts Mutation', () => {
   it('should delete products correctly', async () => {
-    const response = await request(app)
+    const response = await request(serverInstance)
       .post('/graphql')
       .send({
         query: `mutation {
